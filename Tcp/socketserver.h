@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include <fcntl.h>
 
 #define LISTEN_PORT 3308
 

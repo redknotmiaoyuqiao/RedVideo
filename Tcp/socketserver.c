@@ -3,6 +3,23 @@
 int m_ListenSocket = -1;
 int m_BindSocket = -1;
 
+int set_socket_params(int sockfd)
+{
+    int flags1 = fcntl(sockfd,F_GETFL,0);
+    fcntl(sockfd,F_SETFL,flags1 &O_NONBLOCK);
+
+    struct timeval tmval;
+    tmval.tv_sec = 5;
+    tmval.tv_usec = 0;
+
+    setsockopt(sockfd,SOL_SOCKET,SO_SNDBUF,&tmval,sizeof(tmval));
+
+    int opt = 1;
+    setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+
+    return 0;
+}
+
 int client_socket_process(struct sockaddr_in * lpddr)
 {
     fd_set read_set;
@@ -29,7 +46,6 @@ int client_socket_process(struct sockaddr_in * lpddr)
             }
         }
     }
-
     return 0;
 }
 
