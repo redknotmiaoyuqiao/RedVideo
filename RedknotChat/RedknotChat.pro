@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-05-15T01:38:55
+# Project created by QtCreator 2017-05-15T06:34:31
 #
 #-------------------------------------------------
 
@@ -8,32 +8,17 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QtFFmpeg
+TARGET = RedknotChat
 TEMPLATE = app
-
-win32{
-
-}
-
-macx{
-
-INCLUDEPATH += /Volumes/Transcend/Qt/QtFFmpeg/libFFmpeg/include
-LIBS += -L /Volumes/Transcend/Qt/QtFFmpeg/libFFmpeg/lib
-
-LIBS += -lavcodec  \
-        -lavdevice \
-        -lavfilter \
-        -lavformat \
-        -lavutil   \
-        -lswscale
-
-}
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
+QT += multimedia
+QT += multimediawidgets
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -42,14 +27,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    h264decode.cpp \
-    cameraclient.cpp
+    redglwidget.cpp \
+    Camera/MacCamera.cpp
 
-HEADERS  += mainwindow.h \
-    h264decode.h \
-    videoconfig.h \
-    cameraclient.h \
-    cctcpdatadefine.h
+HEADERS  += \
+    redglwidget.h \
+    Camera/MacCamera.h
 
 FORMS    += mainwindow.ui

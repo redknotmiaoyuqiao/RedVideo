@@ -1,6 +1,15 @@
 #ifndef H264DECODE_H
 #define H264DECODE_H
 
+extern "C"
+{
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+}
+
+#include "videoconfig.h"
+
 typedef struct RGBDataDefine
 {
     int width;
@@ -8,13 +17,6 @@ typedef struct RGBDataDefine
     int bufferSize;
     unsigned char * databuffer;
 }RGBDataDefine;
-
-extern "C"
-{
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
-#include "libswscale/swscale.h"
-}
 
 class H264decode
 {
