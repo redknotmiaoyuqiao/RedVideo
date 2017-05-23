@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    Camera/Camera.cpp
+    Camera/Camera.cpp \
+    H264/H264encode.cpp
 
 HEADERS  += mainwindow.h \
-    Camera/Camera.hpp
+    Camera/Camera.hpp \
+    H264/H264encode.hpp
 
 FORMS    += mainwindow.ui

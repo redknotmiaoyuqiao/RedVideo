@@ -13,8 +13,6 @@ int main(int argc, char *argv[])
     for (int idx=0; idx<120; idx++){
         printf("%d\t",data[idx]);
     }
-
-
     /*
     QApplication a(argc, argv);
     MainWindow w;

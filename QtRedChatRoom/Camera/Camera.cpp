@@ -63,6 +63,22 @@ void Camera::start_capturing()
 
 
 void Camera::set_input() {
+    /*
+    struct v4l2_fmtdesc fmts;
+    int len = 0;
+    memset(&fmts, 0, sizeof(fmts));
+    fmts.index = 0;
+    fmts.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    int ret;
+    while ((ret = ioctl(fd, VIDIOC_ENUM_FMT, &fmts)) == 0) {
+        printf("{ pixelformat = '%c%c%c%c', description = '%s' }\n",
+            fmts.pixelformat & 0xFF, (fmts.pixelformat >> 8) & 0xFF,
+            (fmts.pixelformat >> 16) & 0xFF, (fmts.pixelformat >> 24) & 0xFF,
+            fmts.description);
+    }
+    */
+
+
     int index;
     index = 0;
     if (-1 == ioctl (fd, VIDIOC_S_INPUT, &index)) {
@@ -124,7 +140,7 @@ void Camera::set_input() {
     fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     fmt.fmt.pix.width       = this->width;
     fmt.fmt.pix.height      = this->height;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;//V4L2_PIX_FMT_YUYV;//V4L2_PIX_FMT_YUV420
     fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
     if (-1 == ioctl (fd, VIDIOC_S_FMT, &fmt)) {
