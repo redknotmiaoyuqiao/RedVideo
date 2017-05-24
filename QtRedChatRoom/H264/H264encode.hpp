@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 #include <x264.h>
 
 typedef struct {
@@ -14,11 +15,12 @@ class H264encode
 {
 private:
     X264Encoder * encoder;
+    int pts_time = 0;
 public:
-    H264encode();
+    H264encode(X264Encoder * encoder);
     ~H264encode();
 
-    void h264_encoder_init(X264Encoder * encoder, int width, int height);
-    int h264_compress_frame(X264Encoder * encoder, int type, uint8_t * in, uint8_t * out);
-    void h264_encoder_uninit(X264Encoder * encoder);
+    void h264EncoderInit(int width, int height);
+    int h264CompressFrame(int type, uint8_t * in, uint8_t * out);
+    void h264EncoderUninit();
 };
