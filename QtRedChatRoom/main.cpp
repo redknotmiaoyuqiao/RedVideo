@@ -11,22 +11,24 @@ int main(int argc, char *argv[])
     Camera * camera = new Camera();
     camera->OpenCamera("/dev/video0",width,height);
 
-    X264Encoder encode;
-    H264encode * h264encode = new H264encode(&encode);
-
-    unsigned char * data420 = new unsigned char[width * height * 3 / 2];
+    H264encode * h264encode = new H264encode();
+    h264encode->h264_encoder_init(width,height);
 
     int i=0;
-    while(i<100){
+    while(i<10){
         unsigned char * data = camera->read_frame();
-        h264encode->YUV422ToYUV420(data,data420,width,height);
+        unsigned char * out = (uint8_t *) malloc(sizeof(uint8_t) * width * height * 3);
+        int res = h264encode->h264_compress_frame(10,data,out);
+
+        printf("Res::::%d\n\n",res);
+
         i++;
     }
 
 
-    for(int i=0;i<width * height * 3 / 2;i++){
-        printf("%d\t",data420[i]);
-    }
+//    for(int i=0;i<width * height * 3 / 2;i++){
+//        printf("%d\t",data420[i]);
+//    }
 
     /*
     QApplication a(argc, argv);

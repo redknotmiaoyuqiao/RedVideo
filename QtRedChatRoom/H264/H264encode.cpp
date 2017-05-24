@@ -1,17 +1,17 @@
 #include "H264encode.hpp"
 
-H264encode::H264encode(X264Encoder * encoder)
+H264encode::H264encode()
 {
-    this->encoder = encoder;
+    this->encoder = new X264Encoder();
 }
 
 H264encode::~H264encode()
 {
-    h264EncoderUninit();
+    h264_encoder_uninit();
     delete this->encoder;
 }
 
-void H264encode::h264EncoderInit(int width, int height)
+void H264encode::h264_encoder_init(int width, int height)
 {
     encoder->param = (x264_param_t *) malloc(sizeof(x264_param_t));
     encoder->picture = (x264_picture_t *) malloc(sizeof(x264_picture_t));
@@ -29,7 +29,7 @@ void H264encode::h264EncoderInit(int width, int height)
     encoder->param->i_bframe=3;
     encoder->param->b_repeat_headers=1;
 
-    x264_param_apply_profile(encoder->param, "baseline");
+    x264_param_apply_profile(encoder->param, "baseline");	//使用baseline
 
     if ((encoder->handle = x264_encoder_open(encoder->param)) == 0) {
         printf("x264_encoder_open error!\n");
@@ -39,14 +39,18 @@ void H264encode::h264EncoderInit(int width, int height)
     x264_picture_alloc(encoder->picture, X264_CSP_I420, encoder->param->i_width,encoder->param->i_height);
     encoder->picture->img.i_csp = X264_CSP_I420;
     encoder->picture->img.i_plane = 3;
+
+    return;
 }
 
-int H264encode::h264CompressFrame(int type, uint8_t * in, uint8_t * out)
+int H264encode::h264_compress_frame(int type, uint8_t * in, uint8_t * out)
 {
     x264_picture_t pic_out;
     int nNal = -1;
     int result = 0;
+    //int i = 0;
     uint8_t *p_out = out;
+
 
     unsigned int i,j;
     unsigned int base_h;
@@ -63,6 +67,7 @@ int H264encode::h264CompressFrame(int type, uint8_t * in, uint8_t * out)
         *(y+y_index) = *(in+i);
         y_index++;
     }
+
     for(i=0; i<encoder->param->i_height; i+=2){
         base_h = i*encoder->param->i_width*2;
         for(j=base_h+1; j<base_h+encoder->param->i_width*2; j+=2){
@@ -80,24 +85,24 @@ int H264encode::h264CompressFrame(int type, uint8_t * in, uint8_t * out)
     }
 
     switch (type) {
-        case 0:
-            encoder->picture->i_type = X264_TYPE_P;
-            break;
-        case 1:
-            encoder->picture->i_type = X264_TYPE_IDR;
-            break;
-        case 2:
-            encoder->picture->i_type = X264_TYPE_I;
-            break;
-        default:
-            encoder->picture->i_type = X264_TYPE_AUTO;
-            break;
+    case 0:
+        encoder->picture->i_type = X264_TYPE_P;
+        break;
+    case 1:
+        encoder->picture->i_type = X264_TYPE_IDR;
+        break;
+    case 2:
+        encoder->picture->i_type = X264_TYPE_I;
+        break;
+    default:
+        encoder->picture->i_type = X264_TYPE_AUTO;
+        break;
     }
 
-    encoder->picture->i_pts = pts_time;
+    encoder->picture->i_pts=pts_time;
 
     if (x264_encoder_encode(encoder->handle, &(encoder->nal), &nNal, encoder->picture,&pic_out) < 0) {
-        printf("x264_encoder_encode error,type:%08x!\n",encoder->picture->img.i_csp);
+            printf("x264_encoder_encode error,type:%08x!\n",encoder->picture->img.i_csp);
         return -1;
     }
 
@@ -107,12 +112,12 @@ int H264encode::h264CompressFrame(int type, uint8_t * in, uint8_t * out)
         result += encoder->nal[i].i_payload;
     }
 
-    pts_time = pts_time + 1;
+    pts_time=pts_time+1;
 
     return result;
 }
 
-void H264encode::h264EncoderUninit()
+void H264encode::h264_encoder_uninit()
 {
     if (encoder->picture) {
         x264_picture_clean(encoder->picture);
@@ -134,7 +139,6 @@ int H264encode::YUV422ToYUV420(unsigned char * yuv422,unsigned char * yuv420,int
 {
     int ynum=width*height;
     int i,j,k=0;
-
     //得到Y分量
     for(i=0;i<ynum;i++){
         yuv420[i]=yuv422[i*2];
