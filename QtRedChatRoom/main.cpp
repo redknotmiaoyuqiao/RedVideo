@@ -6,19 +6,28 @@
 
 int main(int argc, char *argv[])
 {
+    int width = 640;
+    int height = 320;
     Camera * camera = new Camera();
-    camera->OpenCamera("/dev/video0",640,360);
+    camera->OpenCamera("/dev/video0",width,height);
 
     X264Encoder encode;
     H264encode * h264encode = new H264encode(&encode);
 
-    unsigned char * data = camera->read_frame();
-    unsigned char * out;
+    unsigned char * data420 = new unsigned char[width * height * 3 / 2];
 
-    h264encode->h264EncoderInit(640,320);
-    h264encode->h264CompressFrame(2,data,out);
+    int i=0;
+    while(i<100){
+        unsigned char * data = camera->read_frame();
+        h264encode->YUV422ToYUV420(data,data420,width,height);
+        i++;
+    }
 
-    printf("\n\n%d",sizeof(out));
+
+    for(int i=0;i<width * height * 3 / 2;i++){
+        printf("%d\t",data420[i]);
+    }
+
     /*
     QApplication a(argc, argv);
     MainWindow w;

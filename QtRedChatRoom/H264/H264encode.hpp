@@ -20,6 +20,7 @@ public:
     H264encode(X264Encoder * encoder);
     ~H264encode();
 
+    int YUV422ToYUV420(unsigned char * yuv422,unsigned char * yuv420,int width,int height);
     void h264EncoderInit(int width, int height);
     int h264CompressFrame(int type, uint8_t * in, uint8_t * out);
     void h264EncoderUninit();
