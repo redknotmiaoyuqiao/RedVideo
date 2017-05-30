@@ -1,11 +1,6 @@
 TEMPLATE = app
-CONFIG += console
+CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.c \
-    socketserver.c
-
-HEADERS += \
-    socketserver.h \
-    msgdefine.h
+SOURCES += main.cpp
