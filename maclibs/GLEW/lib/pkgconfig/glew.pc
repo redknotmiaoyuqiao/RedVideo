@@ -1,6 +1,6 @@
-prefix=/Users/redknot/RedVideo/libs
+prefix=/Users/redknot/RedVideo/maclibs/GLEW
 exec_prefix=${prefix}
-libdir=/Users/redknot/RedVideo/libs/lib
+libdir=/Users/redknot/RedVideo/maclibs/GLEW/lib
 includedir=${prefix}/include
 
 Name: glew

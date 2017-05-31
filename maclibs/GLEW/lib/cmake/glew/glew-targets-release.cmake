@@ -9,12 +9,12 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set_property(TARGET GLEW::glew APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(GLEW::glew PROPERTIES
   IMPORTED_LINK_INTERFACE_LIBRARIES_RELEASE "/System/Library/Frameworks/OpenGL.framework"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libGLEW.dylib"
-  IMPORTED_SONAME_RELEASE "libGLEW.dylib"
+  IMPORTED_LOCATION_RELEASE "/Users/redknot/RedVideo/maclibs/GLEW/GLEW.framework/Versions/2.0.0/GLEW"
+  IMPORTED_SONAME_RELEASE "GLEW.framework/Versions/2.0.0/GLEW"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS GLEW::glew )
-list(APPEND _IMPORT_CHECK_FILES_FOR_GLEW::glew "${_IMPORT_PREFIX}/lib/libGLEW.dylib" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_GLEW::glew "/Users/redknot/RedVideo/maclibs/GLEW/GLEW.framework/Versions/2.0.0/GLEW" )
 
 # Import target "GLEW::glew_s" for configuration "Release"
 set_property(TARGET GLEW::glew_s APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)

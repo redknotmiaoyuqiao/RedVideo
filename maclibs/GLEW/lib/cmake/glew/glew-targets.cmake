@@ -52,6 +52,7 @@ endif()
 
 # Create imported target GLEW::glew
 add_library(GLEW::glew SHARED IMPORTED)
+set_property(TARGET GLEW::glew PROPERTY FRAMEWORK 1)
 
 set_target_properties(GLEW::glew PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
