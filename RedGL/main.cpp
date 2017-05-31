@@ -1,9 +1,12 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "RedGL/RedGL.hpp"
 
 using namespace std;
 
@@ -32,7 +35,7 @@ int main(int argc, char *argv[])
 
     // Open a window and create its OpenGL context
     GLFWwindow* window; // (In the accompanying source code, this variable is global)
-    window = glfwCreateWindow( 1024, 768, "Tutorial 01", NULL, NULL);
+    window = glfwCreateWindow( 800, 480, "Tutorial 01", NULL, NULL);
     if( window == NULL ){
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
         glfwTerminate();
@@ -50,10 +53,20 @@ int main(int argc, char *argv[])
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
+    glClearColor(1.0f,0.0f,0.0f,1.0f);
+
+
+    //Init Shader
+    GLProgram * program = new GLProgram();
+    GLShader * v_shader = new GLShader(GL_VERTEX_SHADER,"void main(){gl_Position = vec4(1.0);}");
+    GLShader * f_shader = new GLShader(GL_FRAGMENT_SHADER,"void main(){}");
+    program->AddShader(v_shader);
+    program->AddShader(f_shader);
+    program->LinkProgram();
+
     do{
         // Draw nothing, see you in tutorial 2 !
-
-        glClearColor(1.0f,0.0f,0.0f,1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         // This will identify our vertex buffer
         GLuint vertexbuffer;
@@ -77,7 +90,7 @@ int main(int argc, char *argv[])
            (void*)0            // array buffer offset
         );
         // Draw the triangle !
-        //glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+        glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
         glDisableVertexAttribArray(0);
 
 
@@ -88,10 +101,7 @@ int main(int argc, char *argv[])
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-    glfwWindowShouldClose(window) == 0 );
+    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 );
 
-
-    cout << "Hello World!" << endl;
     return 0;
 }
