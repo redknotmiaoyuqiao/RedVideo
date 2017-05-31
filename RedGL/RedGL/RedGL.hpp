@@ -1,4 +1,5 @@
-#define GLEW_STATIC
+#pragma once
+
 #include <GL/glew.h>
 #include <vector>
 #include "stdio.h"
@@ -10,6 +11,7 @@ public:
     GLuint ShaderId;
 
     GLShader(GLenum type, const GLchar* src);
+    void DeleteShader();
 };
 
 class GLProgram
@@ -22,6 +24,7 @@ public:
     GLProgram();
     void AddShader(GLShader * shader);
     void LinkProgram();
+    void UseProgram();
 };
 
 

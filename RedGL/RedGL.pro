@@ -9,7 +9,13 @@ LIBS += -lGL
 
 SOURCES += main.cpp \
     RedGL/GLProgram.cpp \
-    RedGL/GLShader.cpp
+    RedGL/GLShader.cpp \
+    RedGL/TextFile.cpp
 
 HEADERS += \
-    RedGL/RedGL.hpp
+    RedGL/RedGL.hpp \
+    RedGL/File.hpp
+
+DISTFILES += \
+    GLSL/v_shader.vert \
+    GLSL/f_shader.frag

@@ -1,4 +1,4 @@
-#include "RedGL/RedGL.hpp"
+#include "RedGL.hpp"
 
 GLShader::GLShader(GLenum type, const GLchar * src)
 {
@@ -20,4 +20,9 @@ GLShader::GLShader(GLenum type, const GLchar * src)
         glGetShaderInfoLog(ShaderId, InfoLogLength, NULL, &ShaderErrorMessage[0]);
         printf("%s\n", &ShaderErrorMessage[0]);
     }
+}
+
+void GLShader::DeleteShader()
+{
+    glDeleteShader(ShaderId);
 }

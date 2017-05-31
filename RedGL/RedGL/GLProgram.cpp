@@ -1,8 +1,10 @@
-#include "RedGL/RedGL.hpp"
+#include "RedGL.hpp"
 
 GLProgram::GLProgram()
 {
     ProgramId = glCreateProgram();
+
+    printf("%d",ProgramId);
 }
 
 void GLProgram::AddShader(GLShader * shader)
@@ -30,4 +32,14 @@ void GLProgram::LinkProgram()
         glGetProgramInfoLog(ProgramId, InfoLogLength, NULL, &ProgramErrorMessage[0]);
         printf("%s\n", &ProgramErrorMessage[0]);
     }
+
+    for(int i=0;i<size;i++){
+        glDetachShader(ProgramId, ShaderList[i]->ShaderId);
+        ShaderList[i]->DeleteShader();
+    }
+}
+
+void GLProgram::UseProgram()
+{
+    glUseProgram(ProgramId);
 }
