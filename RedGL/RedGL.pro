@@ -6,15 +6,18 @@ CONFIG -= qt
 LIBS += -lglfw
 LIBS += -lGLEW
 LIBS += -lGL
+LIBS += -lSOIL
 
 SOURCES += main.cpp \
     RedGL/GLProgram.cpp \
     RedGL/GLShader.cpp \
-    RedGL/TextFile.cpp
+    RedGL/TextFile.cpp \
+    RedGL/GLTexture.cpp \
+    RedGL/GLVAO.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
-    RedGL/File.hpp
+    RedGL/File.hpp \
 
 DISTFILES += \
     GLSL/v_shader.vert \

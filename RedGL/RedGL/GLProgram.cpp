@@ -43,3 +43,8 @@ void GLProgram::UseProgram()
 {
     glUseProgram(ProgramId);
 }
+
+GLuint GLProgram::GetUniformLocation(char * name)
+{
+    return glGetUniformLocation(ProgramId,name);
+}
