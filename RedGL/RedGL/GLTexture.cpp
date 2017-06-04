@@ -30,5 +30,6 @@ void GLTexture::LoadImage(char * filePath)
 void GLTexture::SetData(unsigned char * data,int width,int height,GLenum internalFormat,GLenum format)
 {
     glBindTexture(GL_TEXTURE_2D, TextureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glBindTexture(GL_TEXTURE_2D, 0);
 }

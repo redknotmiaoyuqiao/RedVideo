@@ -13,11 +13,13 @@ SOURCES += main.cpp \
     RedGL/GLShader.cpp \
     RedGL/TextFile.cpp \
     RedGL/GLTexture.cpp \
-    RedGL/GLVAO.cpp
+    RedGL/GLVAO.cpp \
+    Camera/Camera.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
     RedGL/File.hpp \
+    Camera/Camera.hpp
 
 DISTFILES += \
     GLSL/v_shader.vert \

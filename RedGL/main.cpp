@@ -6,6 +6,7 @@
 
 #include "RedGL/RedGL.hpp"
 #include "RedGL/File.hpp"
+#include "Camera/Camera.hpp"
 
 GLFWwindow* window;
 
@@ -90,10 +91,18 @@ int main( void )
 
     GLTexture * t2 = new GLTexture();
     t2->LoadImage("/home/redknot/Desktop/girl3.jpg");
+
+    int width = 640;
+    int height = 320;
+    Camera * camera = new Camera();
+    camera->OpenCamera("/dev/video0",width,height);
 \
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
+
+        unsigned char * data = camera->read_frame();
+        t->SetData(data,width,height,GL_RED,GL_RED);
 
         glUseProgram(program->ProgramId);
 
