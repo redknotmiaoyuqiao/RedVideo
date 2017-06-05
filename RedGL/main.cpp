@@ -10,6 +10,11 @@
 
 GLFWwindow* window;
 
+int width = 640;
+int height = 480;
+
+int yuv422toyuv420(unsigned char *out, const unsigned char *in, unsigned int width, unsigned int height);
+
 int main( void )
 {
     if( !glfwInit() )
@@ -25,7 +30,7 @@ int main( void )
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow( 500, 500, "RedVideo", NULL, NULL);
+    window = glfwCreateWindow( width, height, "RedVideo", NULL, NULL);
     if( window == NULL ){
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
         getchar();
@@ -86,40 +91,53 @@ int main( void )
     vao->SetEBO(indices,sizeof(indices));
 
 
-    GLTexture * t = new GLTexture();
-    t->LoadImage("/home/redknot/Desktop/girl.jpg");
+    GLTexture * y = new GLTexture();
+    GLTexture * u = new GLTexture();
+    GLTexture * v = new GLTexture();
 
-    GLTexture * t2 = new GLTexture();
-    t2->LoadImage("/home/redknot/Desktop/girl3.jpg");
-
-    int width = 640;
-    int height = 320;
     Camera * camera = new Camera();
     camera->OpenCamera("/dev/video0",width,height);
+
+    unsigned char * yuv420 = (unsigned char * ) malloc(sizeof(unsigned char) * width * height * 1.5);
 \
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
 
         unsigned char * data = camera->read_frame();
-        t->SetData(data,width,height,GL_RED,GL_RED);
+
+        yuv422toyuv420(yuv420,data,width,height);
+
+        y->SetData(yuv420,width,height,GL_RED,GL_RED);
+        u->SetData(yuv420 + width*height,width / 2,height / 2,GL_RED,GL_RED);
+        v->SetData(yuv420 + width*height + width*height/4,width / 2,height / 2,GL_RED,GL_RED);
 
         glUseProgram(program->ProgramId);
 
         glActiveTexture(GL_TEXTURE0); //在绑定纹理之前先激活纹理单元
-        glBindTexture(GL_TEXTURE_2D, t->TextureId);
-        glUniform1i(program->GetUniformLocation("ourTexture0"), 0);
+        glBindTexture(GL_TEXTURE_2D, y->TextureId);
+        glUniform1i(program->GetUniformLocation("y"), 0);
 
         glActiveTexture(GL_TEXTURE1); //在绑定纹理之前先激活纹理单元
-        glBindTexture(GL_TEXTURE_2D, t2->TextureId);
-        glUniform1i(program->GetUniformLocation("ourTexture1"), 1);
+        glBindTexture(GL_TEXTURE_2D, u->TextureId);
+        glUniform1i(program->GetUniformLocation("u"), 1);
+
+        glActiveTexture(GL_TEXTURE2); //在绑定纹理之前先激活纹理单元
+        glBindTexture(GL_TEXTURE_2D, v->TextureId);
+        glUniform1i(program->GetUniformLocation("v"), 2);
+
 
         vao->DrawVAO();
+
+
 
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+
+    free(yuv420);
 
     //glDeleteBuffers(1, &vertexbuffer);
     //glDeleteVertexArrays(1, &VertexArrayID);
@@ -128,4 +146,42 @@ int main( void )
     glfwTerminate();
 
     return 0;
+}
+
+
+int yuv422toyuv420(unsigned char *out, const unsigned char *in, unsigned int width, unsigned int height)
+{
+    unsigned char *y = out;
+    unsigned char *u = out + width*height;
+    unsigned char *v = out + width*height + width*height/4;
+
+    unsigned int i,j;
+    unsigned int base_h;
+    unsigned int is_y = 1, is_u = 1;
+    unsigned int y_index = 0, u_index = 0, v_index = 0;
+
+    unsigned long yuv422_length = 2 * width * height;
+
+    for(i=0; i<yuv422_length; i+=2){
+        *(y+y_index) = *(in+i);
+        y_index++;
+    }
+
+    for(i=0; i<height; i+=2){
+        base_h = i*width*2;
+        for(j=base_h+1; j<base_h+width*2; j+=2){
+            if(is_u){
+                *(u+u_index) = *(in+j);
+                u_index++;
+                is_u = 0;
+            }
+            else{
+                *(v+v_index) = *(in+j);
+                v_index++;
+                is_u = 1;
+            }
+        }
+    }
+
+    return 1;
 }

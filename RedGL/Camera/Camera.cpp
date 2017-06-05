@@ -321,7 +321,7 @@ unsigned char* Camera::read_frame ()
 
     assert (buf.index < n_buffers);
 
-    printf ("%d %d: ", buf.index, buf.bytesused);
+    //printf ("%d %d: ", buf.index, buf.bytesused);
 
     if (-1 == ioctl (fd, VIDIOC_QBUF, &buf)) {
         perror ("VIDIOC_QBUF");
