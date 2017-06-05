@@ -272,6 +272,49 @@ void Camera::get_video_info() {
     }
 }
 
+unsigned char * Camera::read_yuv420_frame ()
+{
+    if(yuv420_data == nullptr){
+        yuv420_data = (unsigned char * ) malloc(sizeof(unsigned char) * width * height * 1.5);
+    }
+
+    unsigned char * in = this->read_frame();
+
+    unsigned char *y = yuv420_data;
+    unsigned char *u = yuv420_data + width*height;
+    unsigned char *v = yuv420_data + width*height + width*height/4;
+
+    unsigned int i,j;
+    unsigned int base_h;
+    unsigned int is_y = 1, is_u = 1;
+    unsigned int y_index = 0, u_index = 0, v_index = 0;
+
+    unsigned long yuv422_length = 2 * width * height;
+
+    for(i=0; i<yuv422_length; i+=2){
+        *(y+y_index) = *(in+i);
+        y_index++;
+    }
+
+    for(i=0; i<height; i+=2){
+        base_h = i*width*2;
+        for(j=base_h+1; j<base_h+width*2; j+=2){
+            if(is_u){
+                *(u+u_index) = *(in+j);
+                u_index++;
+                is_u = 0;
+            }
+            else{
+                *(v+v_index) = *(in+j);
+                v_index++;
+                is_u = 1;
+            }
+        }
+    }
+
+    return yuv420_data;
+}
+
 unsigned char* Camera::read_frame ()
 {
     fd_set fds;

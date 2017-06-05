@@ -30,6 +30,8 @@ private:
     int width = 0;
     int height = 0;
 
+    unsigned char * yuv420_data = nullptr;
+
     void set_input();
     void get_info();
     void get_video_info();
@@ -41,4 +43,5 @@ public:
     void CloseCamera();
 
     unsigned char * read_frame ();
+    unsigned char * read_yuv420_frame ();
 };

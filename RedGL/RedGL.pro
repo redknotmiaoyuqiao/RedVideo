@@ -7,6 +7,7 @@ LIBS += -lglfw
 LIBS += -lGLEW
 LIBS += -lGL
 LIBS += -lSOIL
+LIBS += -lx264
 
 SOURCES += main.cpp \
     RedGL/GLProgram.cpp \
@@ -14,12 +15,14 @@ SOURCES += main.cpp \
     RedGL/TextFile.cpp \
     RedGL/GLTexture.cpp \
     RedGL/GLVAO.cpp \
-    Camera/Camera.cpp
+    Camera/Camera.cpp \
+    H264/H264encode.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
     RedGL/File.hpp \
-    Camera/Camera.hpp
+    Camera/Camera.hpp \
+    H264/H264encode.hpp
 
 DISTFILES += \
     GLSL/v_shader.vert \
