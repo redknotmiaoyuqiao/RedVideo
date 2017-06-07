@@ -102,8 +102,8 @@ int main( void )
 
         unsigned char * yuv420 = camera->read_yuv420_frame();
 
-        y->SetData(yuv420,width,height,GL_RED,GL_RED);
-        u->SetData(yuv420 + width*height,width / 2,height / 2,GL_RED,GL_RED);
+        y->SetData(yuv420 , width , height , GL_RED , GL_RED);
+        u->SetData(yuv420 + width*height , width / 2,height / 2 , GL_RED,GL_RED);
         v->SetData(yuv420 + width*height + width*height/4,width / 2,height / 2,GL_RED,GL_RED);
 
         glUseProgram(program->ProgramId);
@@ -129,6 +129,12 @@ int main( void )
     //glDeleteBuffers(1, &vertexbuffer);
     //glDeleteVertexArrays(1, &VertexArrayID);
     //glDeleteProgram(programID);
+
+    delete ReadFile;
+    delete v_shader;
+    delete f_shader;
+    delete program;
+    delete vao;
 
     glfwTerminate();
 
