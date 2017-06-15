@@ -7,6 +7,7 @@
 #include "RedGL/RedGL.hpp"
 #include "RedGL/File.hpp"
 #include "Camera/Camera.hpp"
+#include "H264/H264encode.hpp"
 
 GLFWwindow* window;
 
@@ -95,12 +96,21 @@ int main( void )
 
     Camera * camera = new Camera();
     camera->OpenCamera("/dev/video0",width,height);
+
+    H264encode * h264 = new H264encode();
+    h264->h264_encoder_init(width,height);
 \
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
 
         unsigned char * yuv420 = camera->read_yuv420_frame();
+
+        /****H264****/
+        unsigned char * out;
+        int frame_size = h264->h264_compress_frame(10,yuv420,out);
+        free(out);
+        /****H264****/
 
         y->SetData(yuv420 , width , height , GL_RED , GL_RED);
         u->SetData(yuv420 + width*height , width / 2,height / 2 , GL_RED,GL_RED);
@@ -135,6 +145,9 @@ int main( void )
     delete f_shader;
     delete program;
     delete vao;
+
+    h264->h264_encoder_uninit();
+    delete h264;
 
     glfwTerminate();
 

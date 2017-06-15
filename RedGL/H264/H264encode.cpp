@@ -43,46 +43,13 @@ void H264encode::h264_encoder_init(int width, int height)
     return;
 }
 
-int H264encode::h264_compress_frame(int type, uint8_t * in, uint8_t * out)
+int H264encode::h264_compress_frame(int type, uint8_t * in, uint8_t * p_out)
 {
     x264_picture_t pic_out;
     int nNal = -1;
     int result = 0;
     //int i = 0;
-    uint8_t *p_out = out;
-
-
-    unsigned int i,j;
-    unsigned int base_h;
-
-    unsigned char *y = encoder->picture->img.plane[0];
-    unsigned char *u = encoder->picture->img.plane[1];
-    unsigned char *v = encoder->picture->img.plane[2];
-
-    int is_y = 1, is_u = 1;
-    int y_index = 0, u_index = 0, v_index = 0;
-    int yuv422_length = 2 * encoder->param->i_width * encoder->param->i_height;
-
-    for(i=0; i<yuv422_length; i+=2){
-        *(y+y_index) = *(in+i);
-        y_index++;
-    }
-
-    for(i=0; i<encoder->param->i_height; i+=2){
-        base_h = i*encoder->param->i_width*2;
-        for(j=base_h+1; j<base_h+encoder->param->i_width*2; j+=2){
-            if(is_u){
-                *(u+u_index) = *(in+j);
-                u_index++;
-                is_u = 0;
-            }
-            else{
-                *(v+v_index) = *(in+j);
-                v_index++;
-                is_u = 1;
-            }
-        }
-    }
+    //uint8_t *p_out = out;
 
     switch (type) {
     case 0:
@@ -101,20 +68,25 @@ int H264encode::h264_compress_frame(int type, uint8_t * in, uint8_t * out)
 
     encoder->picture->i_pts=pts_time;
 
-    if (x264_encoder_encode(encoder->handle, &(encoder->nal), &nNal, encoder->picture,&pic_out) < 0) {
+    int frame_size = x264_encoder_encode(encoder->handle, &(encoder->nal), &nNal, encoder->picture,&pic_out);
+    //printf("Frame Size:%d\n",frame_size);
+
+    if (frame_size < 0) {
             printf("x264_encoder_encode error,type:%08x!\n",encoder->picture->img.i_csp);
         return -1;
     }
 
-    for (i = 0; i < nNal; i++) {
+    p_out = (uint8_t*)malloc(frame_size);
+
+    for (int i = 0; i < nNal; i++) {
         memcpy(p_out, encoder->nal[i].p_payload, encoder->nal[i].i_payload);
         p_out += encoder->nal[i].i_payload;
         result += encoder->nal[i].i_payload;
     }
 
-    pts_time=pts_time+1;
+    pts_time = pts_time+1;
 
-    return result;
+    return frame_size;
 }
 
 void H264encode::h264_encoder_uninit()
