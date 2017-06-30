@@ -9,6 +9,20 @@ LIBS += -lGL
 LIBS += -lSOIL
 LIBS += -lx264
 
+#win32, unix, macx
+
+macx
+{
+    INCLUDEPATH += $$PWD/../macFFmpegLibs/include
+    LIBS += -L$$PWD/../macFFmpegLibs/lib
+    LIBS += -lavcodec   \
+        -lavdevice  \
+        -lavfilter  \
+        -lavformat  \
+        -lavutil    \
+        -lswscale
+}
+
 SOURCES += main.cpp \
     RedGL/GLProgram.cpp \
     RedGL/GLShader.cpp \
@@ -16,13 +30,15 @@ SOURCES += main.cpp \
     RedGL/GLTexture.cpp \
     RedGL/GLVAO.cpp \
     Camera/Camera.cpp \
-    H264/H264encode.cpp
+    H264/H264encode.cpp \
+    H264/H264decoder.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
     RedGL/File.hpp \
     Camera/Camera.hpp \
-    H264/H264encode.hpp
+    H264/H264encode.hpp \
+    H264/H264decoder.hpp
 
 DISTFILES += \
     GLSL/v_shader.vert \
