@@ -8,6 +8,7 @@
 #include "RedGL/File.hpp"
 #include "Camera/Camera.hpp"
 #include "H264/H264encode.hpp"
+#include "H264/H264decoder.hpp"
 
 GLFWwindow* window;
 
@@ -93,6 +94,7 @@ int main( void )
     GLTexture * y = new GLTexture();
     GLTexture * u = new GLTexture();
     GLTexture * v = new GLTexture();
+    GLTexture * rgb = new GLTexture();
 
     Camera * camera = new Camera();
     camera->OpenCamera("/dev/video0",width,height);
@@ -100,6 +102,7 @@ int main( void )
     H264encode * h264 = new H264encode();
     h264->h264_encoder_init(width,height);
 \
+    H264Decoder * h264decode = new H264Decoder();
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
@@ -109,6 +112,12 @@ int main( void )
         /****H264****/
         unsigned char * out;
         int frame_size = h264->h264_compress_frame(10,yuv420,out);
+        //printf("%d\n",frame_size);
+        RGBData_Define rgbData;
+        h264decode->DecodeH264Frames(out,frame_size,&rgbData);
+
+        rgb->SetData(rgbData.databuffer,rgbData.width,rgbData.height,GL_RGB,GL_RGB);
+
         free(out);
         /****H264****/
 
@@ -130,6 +139,10 @@ int main( void )
         glBindTexture(GL_TEXTURE_2D, v->TextureId);
         glUniform1i(program->GetUniformLocation("v"), 2);
 
+        glActiveTexture(GL_TEXTURE3); //在绑定纹理之前先激活纹理单元
+        glBindTexture(GL_TEXTURE_2D, rgb->TextureId);
+        glUniform1i(program->GetUniformLocation("rgb"), 3);
+
         vao->DrawVAO();
 
         glfwSwapBuffers(window);
@@ -146,7 +159,7 @@ int main( void )
     delete program;
     delete vao;
 
-    h264->h264_encoder_uninit();
+    //h264->h264_encoder_uninit();
     delete h264;
 
     glfwTerminate();

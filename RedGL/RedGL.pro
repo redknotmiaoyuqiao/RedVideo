@@ -11,17 +11,15 @@ LIBS += -lx264
 
 #win32, unix, macx
 
-macx
-{
-    INCLUDEPATH += $$PWD/../macFFmpegLibs/include
-    LIBS += -L$$PWD/../macFFmpegLibs/lib
-    LIBS += -lavcodec   \
+INCLUDEPATH += $$PWD/../unixFFmpegLibs/include
+LIBS += -L$$PWD/../unixFFmpegLibs/lib
+LIBS += -lavcodec   \
         -lavdevice  \
         -lavfilter  \
         -lavformat  \
         -lavutil    \
         -lswscale
-}
+
 
 SOURCES += main.cpp \
     RedGL/GLProgram.cpp \
