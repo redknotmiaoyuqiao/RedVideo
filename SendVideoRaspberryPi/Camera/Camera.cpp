@@ -160,8 +160,10 @@ void Camera::set_input() {
     if (fmt.fmt.pix.sizeimage < min)
         fmt.fmt.pix.sizeimage = min;
 
+    puts("帧信息：\n");
     printf("%d %d\n", fmt.fmt.pix.width, fmt.fmt.pix.height);
     printf("%d\n",fmt.fmt.pix.sizeimage);
+    printf("\n");
 
     // Init mmap
     struct v4l2_requestbuffers req;
@@ -265,6 +267,8 @@ void Camera::get_video_info() {
         printf ("%s\n", formats.description);
         formats.index++;
     }
+
+    puts("\n\n");
 
     if (errno != EINVAL || formats.index == 0) {
         perror ("VIDIOC_ENUMFMT");
