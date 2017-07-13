@@ -165,6 +165,12 @@ void Camera::set_input() {
     printf("%d\n",fmt.fmt.pix.sizeimage);
     printf("\n");
 
+    this->realHeight = fmt.fmt.pix.height;
+    this->realWidth = fmt.fmt.pix.width;
+    this->height = fmt.fmt.pix.height;
+    this->width = fmt.fmt.pix.width;
+
+
     // Init mmap
     struct v4l2_requestbuffers req;
 

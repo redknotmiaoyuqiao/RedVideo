@@ -12,8 +12,8 @@
 
 GLFWwindow* window;
 
-int width = 640;
-int height = 480;
+int width = 2000;
+int height = 2000;
 
 int main( void )
 {
@@ -30,7 +30,7 @@ int main( void )
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow( width, height, "RedVideo", NULL, NULL);
+    window = glfwCreateWindow( 128, 72, "RedVideo", NULL, NULL);
     if( window == NULL ){
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
         getchar();
@@ -94,32 +94,18 @@ int main( void )
     GLTexture * y = new GLTexture();
     GLTexture * u = new GLTexture();
     GLTexture * v = new GLTexture();
-    GLTexture * rgb = new GLTexture();
 
     Camera * camera = new Camera();
     camera->OpenCamera("/dev/video0",width,height);
 
-    H264encode * h264 = new H264encode();
-    h264->h264_encoder_init(width,height);
-\
-    H264Decoder * h264decode = new H264Decoder();
+    width = camera->width;
+    height = camera->height;
+
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
 
         unsigned char * yuv420 = camera->read_yuv420_frame();
-
-        /****H264****/
-        unsigned char * out;
-        int frame_size = h264->h264_compress_frame(10,yuv420,out);
-        //printf("%d\n",frame_size);
-        RGBData_Define rgbData;
-        h264decode->DecodeH264Frames(out,frame_size,&rgbData);
-
-        rgb->SetData(rgbData.databuffer,rgbData.width,rgbData.height,GL_RGB,GL_RGB);
-
-        free(out);
-        /****H264****/
 
         y->SetData(yuv420 , width , height , GL_RED , GL_RED);
         u->SetData(yuv420 + width*height , width / 2,height / 2 , GL_RED,GL_RED);
@@ -139,10 +125,6 @@ int main( void )
         glBindTexture(GL_TEXTURE_2D, v->TextureId);
         glUniform1i(program->GetUniformLocation("v"), 2);
 
-        glActiveTexture(GL_TEXTURE3); //在绑定纹理之前先激活纹理单元
-        glBindTexture(GL_TEXTURE_2D, rgb->TextureId);
-        glUniform1i(program->GetUniformLocation("rgb"), 3);
-
         vao->DrawVAO();
 
         glfwSwapBuffers(window);
@@ -158,9 +140,6 @@ int main( void )
     delete f_shader;
     delete program;
     delete vao;
-
-    //h264->h264_encoder_uninit();
-    delete h264;
 
     glfwTerminate();
 

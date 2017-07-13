@@ -29,9 +29,6 @@ private:
 
     struct v4l2_buffer buf;
 
-    int width = 0;
-    int height = 0;
-
     unsigned char * yuv420_data = nullptr;
 
     void set_input();
@@ -41,6 +38,10 @@ private:
 public:
     Camera();
     ~Camera();
+
+    int width = 0;
+    int height = 0;
+
     bool OpenCamera(char * id,int width,int height);
     void CloseCamera();
 
