@@ -8,27 +8,30 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     Camera * camera = new Camera();
-    camera->OpenCamera("/dev/video0",2000,2000);
+    camera->OpenCamera("/dev/video0",500,500);
 
-    X264Encoder x264Encoder;
-    H264Encoder * h264Encoder = new H264Encoder();
+    printf("width:%d\n",camera->width);
+    printf("height:%d\n",camera->height);
 
-    h264Encoder->h264_encoder_init(&x264Encoder,camera->width,camera->height);
+    H264Encoder * h264Encoder = new H264Encoder(camera->width,camera->height);
+
+    FILE * pFile = fopen("/home/redknot/test.h264", "wb");
+
+    unsigned char * out = NULL;
 
     while(1){
-        unsigned char * yuv422data = camera->read_frame();
+        unsigned char * yuv420data = camera->read_yuv420_frame();
 
-        unsigned char * out = (uint8_t * )malloc(10000);
-        int res = h264Encoder->h264_compress_frame(&x264Encoder,10,yuv422data,out);
+        int frame_size = 0;
+        unsigned char * out = h264Encoder->Decode(yuv420data,&frame_size);
 
-        //h264Encoder->encodeH264(yuv420data,out);
+        fwrite(out, 1, frame_size, pFile);
 
-        puts("--------------------\n");
-        printf("frame_size:%d\n",res);
-        printf("%d\n",yuv422data[0]);
-        printf("%d\n",yuv422data[1]);
-        printf("%d\n",yuv422data[2]);
-        puts("--------------------\n");
+        printf("Frame_Size:%d\n",frame_size);
+
+        if(out != NULL){
+            free(out);
+        }
     }
 
     delete camera;
