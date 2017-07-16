@@ -28,15 +28,14 @@ SOURCES += main.cpp \
     RedGL/GLTexture.cpp \
     RedGL/GLVAO.cpp \
     Camera/Camera.cpp \
-    H264/H264encode.cpp \
-    H264/H264decoder.cpp
+    H264/H264Encoder.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
     RedGL/File.hpp \
     Camera/Camera.hpp \
-    H264/H264encode.hpp \
-    H264/H264decoder.hpp
+    H264/H264Encoder.hpp \
+    H264/H264Decoder.hpp
 
 DISTFILES += \
     GLSL/v_shader.vert \

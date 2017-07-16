@@ -7,13 +7,13 @@
 #include "RedGL/RedGL.hpp"
 #include "RedGL/File.hpp"
 #include "Camera/Camera.hpp"
-#include "H264/H264encode.hpp"
-#include "H264/H264decoder.hpp"
+
+#include "H264/H264Encoder.hpp"
 
 GLFWwindow* window;
 
-int width = 2000;
-int height = 2000;
+int width = 500;
+int height = 500;
 
 int main( void )
 {
@@ -30,7 +30,7 @@ int main( void )
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow( 128, 72, "RedVideo", NULL, NULL);
+    window = glfwCreateWindow( 640, 480, "RedVideo", NULL, NULL);
     if( window == NULL ){
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
         getchar();
@@ -101,11 +101,21 @@ int main( void )
     width = camera->width;
     height = camera->height;
 
+    printf("\n\nwidth:%d\n",width);
+    printf("height:%d\n",height);
+
+    H264Encoder * h264Encoder = new H264Encoder(camera->width,camera->height);
+
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
 
         unsigned char * yuv420 = camera->read_yuv420_frame();
+
+        int frame_size = 0;
+        unsigned char * data = h264Encoder->Decode(yuv420,&frame_size);
+
+        //printf("frameSize:%d\n",frame_size);
 
         y->SetData(yuv420 , width , height , GL_RED , GL_RED);
         u->SetData(yuv420 + width*height , width / 2,height / 2 , GL_RED,GL_RED);
@@ -130,6 +140,8 @@ int main( void )
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    delete h264Encoder;
 
     //glDeleteBuffers(1, &vertexbuffer);
     //glDeleteVertexArrays(1, &VertexArrayID);
