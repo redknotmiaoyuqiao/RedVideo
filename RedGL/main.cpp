@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,11 +10,12 @@
 #include "Camera/Camera.hpp"
 
 #include "H264/H264Encoder.hpp"
+#include "H264/H264Decoder.hpp"
 
 GLFWwindow* window;
 
 int width = 500;
-int height = 500;
+int height = 600;
 
 int main( void )
 {
@@ -106,6 +108,13 @@ int main( void )
 
     H264Encoder * h264Encoder = new H264Encoder(camera->width,camera->height);
 
+    H264Decoder * h264Decoder = new H264Decoder();
+
+    H264YUVDef * OUT_yuv420 = new H264YUVDef();
+    OUT_yuv420->luma.dataBuffer = NULL;
+    OUT_yuv420->chromaB.dataBuffer = NULL;
+    OUT_yuv420->chromaR.dataBuffer = NULL;
+
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         glClear( GL_COLOR_BUFFER_BIT );
@@ -115,11 +124,15 @@ int main( void )
         int frame_size = 0;
         unsigned char * data = h264Encoder->Decode(yuv420,&frame_size);
 
+        h264Decoder->DecodeH264Frames(data,frame_size,OUT_yuv420);
+
+        free(data);
+
         //printf("frameSize:%d\n",frame_size);
 
-        y->SetData(yuv420 , width , height , GL_RED , GL_RED);
-        u->SetData(yuv420 + width*height , width / 2,height / 2 , GL_RED,GL_RED);
-        v->SetData(yuv420 + width*height + width*height/4,width / 2,height / 2,GL_RED,GL_RED);
+        y->SetData(OUT_yuv420->luma.dataBuffer , OUT_yuv420->width , OUT_yuv420->height , GL_RED , GL_RED);
+        u->SetData(OUT_yuv420->chromaB.dataBuffer, OUT_yuv420->width / 2 , OUT_yuv420->height / 2 , GL_RED,GL_RED);
+        v->SetData(OUT_yuv420->chromaR.dataBuffer, OUT_yuv420->width / 2 , OUT_yuv420->height / 2 , GL_RED,GL_RED);
 
         glUseProgram(program->ProgramId);
 
@@ -142,6 +155,9 @@ int main( void )
     }
 
     delete h264Encoder;
+    delete h264Decoder;
+
+    delete OUT_yuv420;
 
     //glDeleteBuffers(1, &vertexbuffer);
     //glDeleteVertexArrays(1, &VertexArrayID);

@@ -8,6 +8,8 @@ Camera::Camera()
 Camera::~Camera()
 {
     this->CloseCamera();
+
+    free(yuv420_data);
 }
 
 bool Camera::OpenCamera(char * id,int width,int height)

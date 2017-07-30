@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     RedGL/GLTexture.cpp \
     RedGL/GLVAO.cpp \
     Camera/Camera.cpp \
-    H264/H264Encoder.cpp
+    H264/H264Encoder.cpp \
+    H264/H264Decoder.cpp
 
 HEADERS += \
     RedGL/RedGL.hpp \
